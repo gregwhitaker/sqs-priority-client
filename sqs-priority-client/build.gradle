@@ -1,0 +1,54 @@
+plugins {
+    id "java-library"
+    id "com.avast.gradle.docker-compose"    version "0.14.2"
+    id "com.nike.pdm.localstack"            version "0.1.0"
+    id "com.github.johnrengelman.shadow"    version "6.1.0"
+    id "org.asciidoctor.jvm.convert"        version "3.1.0"
+    id "org.unbroken-dome.test-sets"        version "3.0.1"
+    id "com.adarshr.test-logger"            version "2.1.0"
+}
+
+// Project Configuration
+description = "Amazon SQS client wrapper that supports reading from multiple queues with configured message priorities"
+
+// Dependency Management
+dependencies {
+    implementation "io.projectreactor:reactor-core:3.4.4"
+    implementation "org.slf4j:slf4j-api:1.7.30"
+    implementation "software.amazon.awssdk:sqs:2.16.24"
+
+    runtime "org.slf4j:slf4j-simple:1.7.30"
+}
+
+// Testing
+testSets {
+    integTest
+}
+
+// LocalStack
+dockerCompose {
+    useComposeFiles = [ "${projectDir}/localstack/localstack-docker-compose.yml" ]
+}
+
+task publishMessages (type: com.nike.pdm.localstack.aws.sqs.PublishSqsTask) {
+    dependsOn('publishHighPriorityMessages', 'publishMediumPriorityMessages', 'publishLowPriorityMessages')
+    description("Publishes messages to each of the priority queues.")
+}
+
+task publishHighPriorityMessages(type: com.nike.pdm.localstack.aws.sqs.PublishSqsTask) {
+    queueNames = [ 'high-priority-queue']
+    message = file("${projectDir}/localstack/messages/1-high-priority-messages")
+    description("Publishes messages to the high priority queue.")
+}
+
+task publishMediumPriorityMessages(type: com.nike.pdm.localstack.aws.sqs.PublishSqsTask) {
+    queueNames = [ 'medium-priority-queue']
+    message = file("${projectDir}/localstack/messages/2-medium-priority-messages")
+    description("Publishes messages to the medium priority queue.")
+}
+
+task publishLowPriorityMessages(type: com.nike.pdm.localstack.aws.sqs.PublishSqsTask) {
+    queueNames = [ 'low-priority-queue']
+    message = file("${projectDir}/localstack/messages/3-low-priority-messages")
+    description("Publishes messages to the low priority queue.")
+}
