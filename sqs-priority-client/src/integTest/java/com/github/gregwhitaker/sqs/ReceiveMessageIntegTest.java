@@ -14,17 +14,17 @@ public class ReceiveMessageIntegTest {
             .build();
 
     final SqsPriorityClient sqsPriorityClient = SqsPriorityClient.builder(sqs)
-            .withMaxNumberOfMessages(5)
             .withQueues()
               .queue("high-priority-queue", 0.8)
               .queue("medium-priority-queue", 0.15)
               .queue("low-priority-queue", 0.05)
             .end()
+            .withMaxNumberOfMessages(5)
             .build();
 
     final CountDownLatch latch = new CountDownLatch(1);
 
-    sqsPriorityClient.receiveMessages()
+    sqsPriorityClient.receiveMessages(100)
             .repeat()
             .map(message -> {
               System.out.printf("Message %s: %s%n", message.messageId(), message.body());

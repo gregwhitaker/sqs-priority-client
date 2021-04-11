@@ -27,11 +27,14 @@ public class SqsPriorityClient {
   }
 
   public Flux<Message> receiveMessages() {
+    return receiveMessages(Long.MAX_VALUE);
+  }
+
+  public Flux<Message> receiveMessages(final long count) {
     return null;
   }
 
   public Mono<Void> deleteMessage(final String receiptHandle) {
     return null;
   }
-
 }
