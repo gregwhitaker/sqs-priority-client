@@ -15,7 +15,7 @@ public class ReceiveMessageIntegTest {
 
     final SqsPriorityClient sqsPriorityClient = SqsPriorityClient.builder(sqs)
             .withQueues()
-              .queue("high-priority-queue", 0.8)
+              .queue("high-priority-queue", 0.80)
               .queue("medium-priority-queue", 0.15)
               .queue("low-priority-queue", 0.05)
             .end()
@@ -25,13 +25,10 @@ public class ReceiveMessageIntegTest {
     final CountDownLatch latch = new CountDownLatch(1);
 
     sqsPriorityClient.receiveMessages(100)
-            .repeat()
-            .map(message -> {
-              System.out.printf("Message %s: %s%n", message.messageId(), message.body());
-              return sqsPriorityClient.deleteMessage(message.receiptHandle());
-            })
             .doOnComplete(latch::countDown)
-            .subscribe();
+            .subscribe(message -> {
+              System.out.printf("Message %s: %s%n", message.messageId(), message.body());
+            });
 
     latch.await();
   }

@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +32,7 @@ public class SqsPriorityQueueBuilder {
     final LinkedHashMap<String, Double> weightedQueues = parentBuilder.config.getWeightedQueues();
     weightedQueues.put(queueName, weight);
 
-    // Sort the queues based on weight
+    // Sort the queues based on weight (highest weight first)
     parentBuilder.config.setWeightedQueues(weightedQueues.entrySet()
             .stream()
             .sorted(Map.Entry.comparingByValue())
