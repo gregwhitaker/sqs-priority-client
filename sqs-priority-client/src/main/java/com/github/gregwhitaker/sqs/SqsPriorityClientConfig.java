@@ -4,7 +4,14 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 
 import java.util.LinkedHashMap;
 
+/**
+ * SqsPriorityClient configuration
+ */
 public class SqsPriorityClientConfig {
+
+  /**
+   * Default maximum number of SQS messages to retrieve at a time.
+   */
   public int DEFAULT_MAX_NUMBER_OF_MESSAGES = 10;
 
   private SqsClient sqsClient;

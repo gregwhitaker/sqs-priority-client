@@ -3,7 +3,6 @@ package com.github.gregwhitaker.sqs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
@@ -13,14 +12,13 @@ import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
 
+/**
+ * SQS client that receives messages from multiple queues based on weighted priority.
+ */
 public class SqsPriorityClient {
   private static final Logger LOG = LoggerFactory.getLogger(SqsPriorityClient.class);
   private static final Random RAND = new Random(System.currentTimeMillis());
@@ -45,17 +43,19 @@ public class SqsPriorityClient {
   }
 
   /**
+   * Receives a stream of messages that never completes.
    *
-   * @return
+   * @return a {@link Flux<Message>}
    */
   public Flux<Message> receiveMessages() {
     return receiveMessages(Long.MAX_VALUE);
   }
 
   /**
+   * Receives a finite stream of the specified number of messages and then completes.
    *
-   * @param count
-   * @return
+   * @param count number of messages to receive
+   * @return a {@link Flux<Message>}
    */
   public Flux<Message> receiveMessages(final long count) {
     return Flux.create(sink -> {
@@ -68,10 +68,10 @@ public class SqsPriorityClient {
 
         final ReceiveMessageResponse receiveMessageResponse = config.getSqsClient().receiveMessage(request);
         if (receiveMessageResponse.hasMessages()) {
-          for (Message message : receiveMessageResponse.messages()) {
+          receiveMessageResponse.messages().forEach(message -> {
             sink.next(message);
             rcvCnt.incrementAndGet();
-          }
+          });
         }
       }
 
@@ -89,8 +89,9 @@ public class SqsPriorityClient {
   }
 
   /**
+   * Gets the next queue url to read.
    *
-   * @return
+   * @return queue url
    */
   private String nextQueueUrl() {
     final double nextRand = RAND.nextDouble();
@@ -106,7 +107,8 @@ public class SqsPriorityClient {
   }
 
   /**
-   *
+   * Initializes the queue threshold and queue url mappings used to select the
+   * next queue to read based on priority.
    */
   private void initQueues(final SqsPriorityClientConfig config) {
     this.queueThresholds = new ArrayList<>(config.getWeightedQueues().size());
