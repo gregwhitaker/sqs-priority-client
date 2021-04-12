@@ -7,11 +7,15 @@ plugins {
 
 // Project Configuration
 description = "Example of reading from multiple Amazon SQS queues with weighted priority using the sqs-priority-client"
+mainClassName = "example.Application"
 
 // Dependency Management
 dependencies {
     implementation project(":sqs-priority-client")
 }
+
+// Local Development
+run.dependsOn("startLocalStack", "publishMessages")
 
 // LocalStack
 dockerCompose {

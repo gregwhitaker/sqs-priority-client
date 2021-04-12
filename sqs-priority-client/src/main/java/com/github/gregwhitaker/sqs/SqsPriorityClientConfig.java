@@ -38,7 +38,7 @@ public class SqsPriorityClientConfig {
   /**
    * Default duration queue reading is paused for a queue when the max empty receives are encountered.
    */
-  public Duration DEFAULT_EMPTY_RECEIVE_TIMEOUT = Duration.ofSeconds(1);
+  public Duration DEFAULT_EMPTY_RECEIVE_TIMEOUT = Duration.ofSeconds(10);
 
   private SqsClient sqsClient;
   private int maxNumberOfMessages = DEFAULT_MAX_NUMBER_OF_MESSAGES;
