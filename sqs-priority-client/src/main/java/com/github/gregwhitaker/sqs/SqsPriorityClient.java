@@ -97,19 +97,27 @@ public class SqsPriorityClient {
     return null;
   }
 
+  /**
+   * Selects the next queue from which to poll for messages.
+   *
+   * @return the {@link PriorityQueueInfo} for the next queue
+   */
   private PriorityQueueInfo nextQueue() {
     final double nextRand = RAND.nextDouble();
 
     while (true) {
+      // Select next queue based on threshold
       for (int cnt = 0; cnt < queues.size(); cnt++) {
         if (nextRand >= queues.get(cnt).getThreshold() && queues.get(cnt).isAvailable()) {
           return queues.get(cnt);
         }
       }
 
+      // Select the highest priority queue if no other queue selected
       if (queues.get(queues.size() - 1).isAvailable()) {
         return queues.get(queues.size() - 1);
       } else {
+        // In the event no queues are available sleep for a short period to prevent AWS rate-limiting
         try {
           Thread.sleep(1_000);
         } catch (InterruptedException e) {

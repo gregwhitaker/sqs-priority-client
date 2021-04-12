@@ -3,6 +3,9 @@ package com.github.gregwhitaker.sqs.internal;
 import java.time.Duration;
 import java.util.concurrent.atomic.LongAdder;
 
+/**
+ * Stores information about queues managed by the client.
+ */
 public class PriorityQueueInfo {
 
   private final String queueName;
