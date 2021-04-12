@@ -8,6 +8,9 @@ Run the following command to build the library and examples:
 
     ./gradlew clean build
 
+## Bugs and Feedback
+For bugs, questions, and discussions please use the [Github Issues](https://github.com/gregwhitaker/sqs-priority-client/issues).
+
 ## License
 Copyright 2021 Greg Whitaker
 
