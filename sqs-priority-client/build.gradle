@@ -39,7 +39,7 @@ task setupLocalQueues(type: com.nike.pdm.localstack.aws.sqs.CreateSqsQueuesTask)
     ]
 }
 
-task publishMessages (type: com.nike.pdm.localstack.aws.sqs.PublishSqsTask) {
+task publishMessages {
     dependsOn('publishHighPriorityMessages', 'publishMediumPriorityMessages', 'publishLowPriorityMessages')
     description("Publishes messages to each of the priority queues.")
 }

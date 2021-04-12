@@ -9,7 +9,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
-import software.amazon.awssdk.services.sqs.model.DeleteMessageResponse;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
 import software.amazon.awssdk.services.sqs.model.Message;
@@ -39,7 +38,6 @@ public class SqsPriorityClient {
     this.config = config;
     this.receiptHandleCache = CacheBuilder.newBuilder()
             .maximumSize(10_000)
-            .expireAfterAccess(Duration.ofMinutes(1))
             .expireAfterWrite(Duration.ofMinutes(5))
             .build();
 
@@ -74,6 +72,7 @@ public class SqsPriorityClient {
   public Flux<Message> receiveMessages(final long count) {
     return Flux.create(fluxSink -> {
       final AtomicLong rxCnt = new AtomicLong();
+
       while (rxCnt.get() <= count) {
         final PriorityQueueInfo queue = nextQueue();
 
@@ -83,6 +82,7 @@ public class SqsPriorityClient {
                 .build();
 
         final ReceiveMessageResponse receiveMessageResponse = config.getSqsClient().receiveMessage(request);
+
         if (receiveMessageResponse.hasMessages()) {
           receiveMessageResponse.messages().forEach(message -> {
             receiptHandleCache.put(message.receiptHandle(), queue.getIndex());
@@ -90,6 +90,7 @@ public class SqsPriorityClient {
             fluxSink.next(message);
           });
         } else {
+          // No messages received
           if (queue.getEmptyReceiveCnt().sum() == config.getMaxEmptyReceiveCount()) {
             queue.timeout(config.getEmptyReceiveTimeout());
           } else {
@@ -98,6 +99,7 @@ public class SqsPriorityClient {
         }
       }
 
+      // Complete the stream after the specified number of messages have been emitted
       fluxSink.complete();
     });
   }
@@ -137,22 +139,47 @@ public class SqsPriorityClient {
     final double nextRand = RAND.nextDouble();
 
     while (true) {
-      // Select next queue based on threshold
-      for (int cnt = 0; cnt < queues.size(); cnt++) {
-        if (nextRand >= queues.get(cnt).getThreshold() && queues.get(cnt).isAvailable()) {
-          return queues.get(cnt);
+      // Select queue based on random threshold value
+      PriorityQueueInfo nextQueue = null;
+      for (PriorityQueueInfo queueInfo : queues) {
+        if (nextRand >= queueInfo.getThreshold()) {
+          nextQueue = queueInfo;
+          break;
         }
       }
 
-      // Select the highest priority queue if no other queue selected
-      if (queues.get(queues.size() - 1).isAvailable()) {
-        return queues.get(queues.size() - 1);
+      // In the event no queue was selected above then select the highest priority queue
+      if (nextQueue == null) {
+        nextQueue = queues.get(queues.size() - 1);
+      }
+
+      if (nextQueue.isAvailable()) {
+        return nextQueue;
       } else {
-        // In the event no queues are available sleep for a short period to prevent AWS rate-limiting
-        try {
-          Thread.sleep(1_000);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
+        // If the selected queue is not available then backoff to the next highest priority queue
+        PriorityQueueInfo tmpNextQueue = nextQueue;
+        while (true) {
+          if (tmpNextQueue.getIndex() == 0) {
+            tmpNextQueue = queues.get(queues.size() - 1);
+          } else {
+            tmpNextQueue = queues.get(tmpNextQueue.getIndex() - 1);
+          }
+
+          if (tmpNextQueue.getIndex() == nextQueue.getIndex()) {
+            try {
+              // In the event no queues are available sleep for a short period to prevent AWS rate-limiting
+              Thread.sleep(1_000);
+            } catch (InterruptedException e) {
+              throw new RuntimeException(e);
+            }
+
+            // Return to the main queue selection loop and attempt to get a new queue
+            break;
+          } else {
+            if (tmpNextQueue.isAvailable()) {
+              return tmpNextQueue;
+            }
+          }
         }
       }
     }
@@ -165,10 +192,10 @@ public class SqsPriorityClient {
     // Initialize the priority queues managed by the client
     int curIdx = 0;
     for (Map.Entry<String, Double> entry : config.getWeightedQueues().entrySet()) {
-      final String queueName = entry.getKey();
-      final Double weight = entry.getValue();
-
       try {
+        final String queueName = entry.getKey();
+        final Double weight = entry.getValue();
+
         final GetQueueUrlResponse response = config.getSqsClient().getQueueUrl(GetQueueUrlRequest.builder()
                 .queueName(queueName)
                 .build());

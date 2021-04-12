@@ -19,7 +19,7 @@ public class ReceiveMessageIntegTest {
               .queue("medium-priority-queue", 0.15)
               .queue("low-priority-queue", 0.05)
             .end()
-            .withMaxNumberOfMessages(5)
+            .withMaxNumberOfMessages(10)
             .build();
 
     final CountDownLatch latch = new CountDownLatch(1);
