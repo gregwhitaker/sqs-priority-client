@@ -105,9 +105,10 @@ public class SqsPriorityClient {
   }
 
   /**
+   * Deletes a message from the queue.
    *
-   * @param receiptHandle
-   * @return
+   * @param receiptHandle message receipt handle
+   * @return a {@link Mono<Void>}
    */
   public Mono<Void> deleteMessage(final String receiptHandle) {
     return Mono.fromSupplier(() -> {

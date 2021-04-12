@@ -15,8 +15,14 @@ public class SqsPriorityClientConfig {
    */
   public int DEFAULT_MAX_NUMBER_OF_MESSAGES = 10;
 
+  /**
+   * Default maximum number of empty receives encountered on a queue before reading is temporarily paused.
+   */
   public int DEFAULT_MAX_EMPTY_RECEIVE_COUNT = 10;
 
+  /**
+   * Default duration queue reading is paused for a queue when the max empty receives are encountered.
+   */
   public Duration DEFAULT_EMPTY_RECEIVE_TIMEOUT = Duration.ofSeconds(1);
 
   private SqsClient sqsClient;
@@ -25,38 +31,82 @@ public class SqsPriorityClientConfig {
   private Duration emptyReceiveTimeout = DEFAULT_EMPTY_RECEIVE_TIMEOUT;
   private LinkedHashMap<String, Double> weightedQueues;
 
+  /**
+   * Gets the AWS sqs client.
+   *
+   * @return
+   */
   public SqsClient getSqsClient() {
     return sqsClient;
   }
 
+  /**
+   * Sets the AWS sqs client.
+   *
+   * @param sqsClient
+   */
   public void setSqsClient(SqsClient sqsClient) {
     this.sqsClient = sqsClient;
   }
 
+  /**
+   * Gets the maximum number of messages to retrieve from a queue in a single read.
+   * @return
+   */
   public int getMaxNumberOfMessages() {
     return maxNumberOfMessages;
   }
 
+  /**
+   * Sets the maximum number of messages to retrieve from a queue in a single read.
+   *
+   * @param maxNumberOfMessages
+   */
   public void setMaxNumberOfMessages(int maxNumberOfMessages) {
     this.maxNumberOfMessages = maxNumberOfMessages;
   }
 
+  /**
+   * Gets the maximum number of empty receives on a queue before reading is paused.
+   *
+   * @return
+   */
   public int getMaxEmptyReceiveCount() {
     return maxEmptyReceiveCount;
   }
 
+  /**
+   * Sets the maximum number of empty receives on a queue before reading is paused.
+   *
+   * @param maxEmptyReceiveCount
+   */
   public void setMaxEmptyReceiveCount(int maxEmptyReceiveCount) {
     this.maxEmptyReceiveCount = maxEmptyReceiveCount;
   }
 
+  /**
+   * Gets the timeout for empty receives.
+   *
+   * @return
+   */
   public Duration getEmptyReceiveTimeout() {
     return emptyReceiveTimeout;
   }
 
+  /**
+   * Sets the timeout for empty receives.
+   *
+   * @param emptyReceiveTimeout
+   */
   public void setEmptyReceiveTimeout(Duration emptyReceiveTimeout) {
     this.emptyReceiveTimeout = emptyReceiveTimeout;
   }
 
+  /**
+   * Gets the priority weighted queues.
+   *
+   * @return
+   */
   public LinkedHashMap<String, Double> getWeightedQueues() {
     if (weightedQueues == null) {
       this.weightedQueues = new LinkedHashMap<>();
@@ -65,6 +115,11 @@ public class SqsPriorityClientConfig {
     return weightedQueues;
   }
 
+  /**
+   * Sets the priority weighted queues.
+   *
+   * @param weightedQueues
+   */
   public void setWeightedQueues(LinkedHashMap<String, Double> weightedQueues) {
     this.weightedQueues = weightedQueues;
   }
