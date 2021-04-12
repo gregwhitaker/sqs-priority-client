@@ -22,7 +22,7 @@ import java.time.Duration;
 /**
  * Configures and builds an instance of {@link SqsPriorityClient}.
  */
-class SqsPriorityClientBuilder {
+public class SqsPriorityClientBuilder {
   protected SqsPriorityClientConfig config = new SqsPriorityClientConfig();
 
   public SqsPriorityClientBuilder(final SqsClient sqsClient) {

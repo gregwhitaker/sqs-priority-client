@@ -1,3 +1,4 @@
 rootProject.name = 'sqs-priority-client'
 include 'sqs-priority-client'
+include 'example'
 
