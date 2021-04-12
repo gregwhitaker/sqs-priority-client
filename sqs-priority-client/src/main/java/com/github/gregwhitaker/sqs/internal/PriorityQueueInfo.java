@@ -31,6 +31,15 @@ public class PriorityQueueInfo {
   private final LongAdder emptyReceiveCnt = new LongAdder();
   private volatile Long timeoutExpiration;
 
+  /**
+   * Creates a new instance of {@link PriorityQueueInfo}.
+   *
+   * @param index queue index ranking
+   * @param queueName queue name
+   * @param queueUrl queue url
+   * @param weight queue weight
+   * @param threshold queue priority threshold
+   */
   public PriorityQueueInfo(final int index,
                            final String queueName,
                            final String queueUrl,
@@ -43,14 +52,28 @@ public class PriorityQueueInfo {
     this.threshold = threshold;
   }
 
+  /**
+   * Increments the empty receive count of this queue by 1.
+   */
   public void incrementEmptyReceive() {
     emptyReceiveCnt.add(1);
   }
 
+  /**
+   * Marks the queue as timed out for the specified duration. When the queue is in timeout it will
+   * not be checked for messages.
+   *
+   * @param duration length of timeout
+   */
   public void timeout(final Duration duration) {
     this.timeoutExpiration = System.currentTimeMillis() + Duration.ZERO.toMillis();
   }
 
+  /**
+   * Checks to see if the queue is available for reads.
+   *
+   * @return <code>true</code> if the queue is available; otherwise <code>false</code>
+   */
   public boolean isAvailable() {
     if (timeoutExpiration == null) {
       return true;
@@ -65,26 +88,56 @@ public class PriorityQueueInfo {
     }
   }
 
+  /**
+   * Gets the index ranking of the queue. Higher number signifies higher priority.
+   *
+   * @return index ranking of queue
+   */
   public int getIndex() {
     return index;
   }
 
+  /**
+   * Gets the name of the queue.
+   *
+   * @return queue name
+   */
   public String getQueueName() {
     return queueName;
   }
 
+  /**
+   * Gets the configured weight of the queue.
+   *
+   * @return queue priority weight
+   */
   public double getWeight() {
     return weight;
   }
 
+  /**
+   * Gets the calculated threshold for the queue. The threshold is 1.0 - weight.
+   *
+   * @return queue priority threshold
+   */
   public double getThreshold() {
     return threshold;
   }
 
+  /**
+   * Gets the queue url.
+   *
+   * @return queue url
+   */
   public String getQueueUrl() {
     return queueUrl;
   }
 
+  /**
+   * Gets the empty receive count of the queue.
+   *
+   * @return number of empty receives
+   */
   public LongAdder getEmptyReceiveCnt() {
     return emptyReceiveCnt;
   }
