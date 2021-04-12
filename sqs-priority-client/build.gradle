@@ -20,11 +20,20 @@ dependencies {
     api "software.amazon.awssdk:sqs:2.16.24"
 
     runtime "org.slf4j:slf4j-simple:1.7.30"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.3.1"
+    testImplementation "org.mockito:mockito-core:2.21.0"
+
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.3.1"
 }
 
 // Testing
 testSets {
     integTest
+}
+
+test {
+    useJUnitPlatform()
 }
 
 // LocalStack
