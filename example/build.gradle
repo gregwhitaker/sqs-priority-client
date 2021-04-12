@@ -18,6 +18,10 @@ dependencies {
 run.dependsOn("startLocalStack", "publishMessages")
 
 // LocalStack
+localstack {
+    workingDir = file("${projectDir}/localstack")
+}
+
 dockerCompose {
     useComposeFiles = [ "${projectDir}/localstack/localstack-docker-compose.yml" ]
 }
