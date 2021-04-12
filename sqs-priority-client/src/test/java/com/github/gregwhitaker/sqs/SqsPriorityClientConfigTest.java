@@ -27,7 +27,7 @@ public class SqsPriorityClientConfigTest {
   @Test
   public void defaultMaxNumberOfMessagesShouldBe10() {
     // Given
-    SqsPriorityClientConfig config = new SqsPriorityClientConfig();
+    final SqsPriorityClientConfig config = new SqsPriorityClientConfig();
 
     // Then
     assertEquals(10, config.getMaxNumberOfMessages());
@@ -36,7 +36,7 @@ public class SqsPriorityClientConfigTest {
   @Test
   public void defaultMaxEmptyReceiveCountShouldBe10() {
     // Given
-    SqsPriorityClientConfig config = new SqsPriorityClientConfig();
+    final SqsPriorityClientConfig config = new SqsPriorityClientConfig();
 
     // Then
     assertEquals(10, config.getMaxEmptyReceiveCount());
@@ -45,7 +45,7 @@ public class SqsPriorityClientConfigTest {
   @Test
   public void defaultEmptyReceiveTimeoutShouldBe10Seconds() {
     // Given
-    SqsPriorityClientConfig config = new SqsPriorityClientConfig();
+    final SqsPriorityClientConfig config = new SqsPriorityClientConfig();
 
     // Then
     assertEquals(Duration.ofSeconds(10), config.getEmptyReceiveTimeout());
@@ -54,7 +54,7 @@ public class SqsPriorityClientConfigTest {
   @Test
   public void shouldDefaultWeightedQueuesToEmptyIfNoneSpecified() {
     // Given
-    SqsPriorityClientConfig config = new SqsPriorityClientConfig();
+    final SqsPriorityClientConfig config = new SqsPriorityClientConfig();
 
     // Then
     assertTrue(config.getWeightedQueues().isEmpty());
