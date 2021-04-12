@@ -13,6 +13,7 @@ description = "Amazon SQS client wrapper that supports reading from multiple que
 
 // Dependency Management
 dependencies {
+    implementation "com.google.guava:guava:30.1.1-jre"
     implementation "io.projectreactor:reactor-core:3.4.4"
     implementation "org.slf4j:slf4j-api:1.7.30"
     implementation "software.amazon.awssdk:sqs:2.16.24"
@@ -28,6 +29,14 @@ testSets {
 // LocalStack
 dockerCompose {
     useComposeFiles = [ "${projectDir}/localstack/localstack-docker-compose.yml" ]
+}
+
+task setupLocalQueues(type: com.nike.pdm.localstack.aws.sqs.CreateSqsQueuesTask) {
+    queueNames = [
+            'high-priority-queue',
+            'medium-priority-queue',
+            'low-priority-queue',
+    ]
 }
 
 task publishMessages (type: com.nike.pdm.localstack.aws.sqs.PublishSqsTask) {

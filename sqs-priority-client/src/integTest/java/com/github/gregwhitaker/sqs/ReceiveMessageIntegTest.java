@@ -24,11 +24,13 @@ public class ReceiveMessageIntegTest {
 
     final CountDownLatch latch = new CountDownLatch(1);
 
-    sqsPriorityClient.receiveMessages(100)
-            .doOnComplete(latch::countDown)
-            .subscribe(message -> {
+    sqsPriorityClient.receiveMessages()
+            .flatMap(message -> {
               System.out.printf("Message %s: %s%n", message.messageId(), message.body());
-            });
+              return sqsPriorityClient.deleteMessage(message.receiptHandle());
+            })
+            .doOnComplete(latch::countDown)
+            .subscribe();
 
     latch.await();
   }

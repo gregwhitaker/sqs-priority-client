@@ -1,22 +1,28 @@
 package com.github.gregwhitaker.sqs;
 
 import com.github.gregwhitaker.sqs.internal.PriorityQueueInfo;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageResponse;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
+import software.amazon.awssdk.services.sqs.model.SqsException;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.atomic.LongAdder;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * SQS client that receives messages from multiple queues based on weighted priority.
@@ -27,9 +33,16 @@ public class SqsPriorityClient {
 
   private final SqsPriorityClientConfig config;
   private final List<PriorityQueueInfo> queues = new ArrayList<>();
+  private final Cache<String, Integer> receiptHandleCache;
 
   SqsPriorityClient(SqsPriorityClientConfig config) {
     this.config = config;
+    this.receiptHandleCache = CacheBuilder.newBuilder()
+            .maximumSize(10_000)
+            .expireAfterAccess(Duration.ofMinutes(1))
+            .expireAfterWrite(Duration.ofMinutes(5))
+            .build();
+
     initialize();
   }
 
@@ -60,8 +73,8 @@ public class SqsPriorityClient {
    */
   public Flux<Message> receiveMessages(final long count) {
     return Flux.create(fluxSink -> {
-      final LongAdder rxCnt = new LongAdder();
-      while (rxCnt.sum() <= count) {
+      final AtomicLong rxCnt = new AtomicLong();
+      while (rxCnt.get() <= count) {
         final PriorityQueueInfo queue = nextQueue();
 
         final ReceiveMessageRequest request = ReceiveMessageRequest.builder()
@@ -72,12 +85,13 @@ public class SqsPriorityClient {
         final ReceiveMessageResponse receiveMessageResponse = config.getSqsClient().receiveMessage(request);
         if (receiveMessageResponse.hasMessages()) {
           receiveMessageResponse.messages().forEach(message -> {
+            receiptHandleCache.put(message.receiptHandle(), queue.getIndex());
+            rxCnt.incrementAndGet();
             fluxSink.next(message);
-            rxCnt.add(1);
           });
         } else {
-          if (queue.getEmptyReceiveCnt().sum() == 10) {
-            queue.timeout(Duration.ofSeconds(1));
+          if (queue.getEmptyReceiveCnt().sum() == config.getMaxEmptyReceiveCount()) {
+            queue.timeout(config.getEmptyReceiveTimeout());
           } else {
             queue.incrementEmptyReceive();
           }
@@ -94,7 +108,24 @@ public class SqsPriorityClient {
    * @return
    */
   public Mono<Void> deleteMessage(final String receiptHandle) {
-    return null;
+    return Mono.fromSupplier(() -> {
+      final Integer idx = receiptHandleCache.getIfPresent(receiptHandle);
+      if (idx != null) {
+        try {
+          config.getSqsClient().deleteMessage(DeleteMessageRequest.builder()
+                  .receiptHandle(receiptHandle)
+                  .queueUrl(queues.get(idx).getQueueUrl())
+                  .build());
+
+          receiptHandleCache.invalidate(receiptHandle);
+        } catch (Exception e) {
+          LOG.error("Unable to delete message. [receiptHandle: '{}', queueUrl: '{}']", receiptHandle, queues.get(idx).getQueueUrl());
+          throw new RuntimeException(String.format("Unable to delete message. [receiptHandle: '%s', queueUrl: '%s']", receiptHandle, queues.get(idx).getQueueUrl()), e);
+        }
+      }
+
+      return null;
+    });
   }
 
   /**
@@ -132,12 +163,22 @@ public class SqsPriorityClient {
    */
   private void initialize() {
     // Initialize the priority queues managed by the client
-    config.getWeightedQueues().forEach((queueName, weight) -> {
-      final GetQueueUrlResponse response = config.getSqsClient().getQueueUrl(GetQueueUrlRequest.builder()
-              .queueName(queueName)
-              .build());
+    int curIdx = 0;
+    for (Map.Entry<String, Double> entry : config.getWeightedQueues().entrySet()) {
+      final String queueName = entry.getKey();
+      final Double weight = entry.getValue();
 
-      this.queues.add(new PriorityQueueInfo(queueName, response.queueUrl(), weight, 1.0 - weight));
-    });
+      try {
+        final GetQueueUrlResponse response = config.getSqsClient().getQueueUrl(GetQueueUrlRequest.builder()
+                .queueName(queueName)
+                .build());
+
+        this.queues.add(new PriorityQueueInfo(curIdx, queueName, response.queueUrl(), weight, 1.0 - weight));
+        curIdx++;
+      } catch (SqsException e) {
+        LOG.error("Unable to initialize queue [queueName: '{}']", entry.getKey());
+        throw new RuntimeException(String.format("Unable to initialize queue [queueName: '%s']", entry.getKey()), e);
+      }
+    }
   }
 }

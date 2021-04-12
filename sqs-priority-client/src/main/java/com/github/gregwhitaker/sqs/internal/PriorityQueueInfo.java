@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public class PriorityQueueInfo {
 
+  private final int index;
   private final String queueName;
   private final double weight;
   private final double threshold;
@@ -15,10 +16,12 @@ public class PriorityQueueInfo {
   private final LongAdder emptyReceiveCnt = new LongAdder();
   private volatile Long timeoutExpiration;
 
-  public PriorityQueueInfo(final String queueName,
+  public PriorityQueueInfo(final int index,
+                           final String queueName,
                            final String queueUrl,
                            final double weight,
                            final double threshold) {
+    this.index = index;
     this.queueName = queueName;
     this.queueUrl = queueUrl;
     this.weight = weight;
@@ -45,6 +48,10 @@ public class PriorityQueueInfo {
       timeoutExpiration = null;
       return false;
     }
+  }
+
+  public int getIndex() {
+    return index;
   }
 
   public String getQueueName() {
