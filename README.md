@@ -1,7 +1,7 @@
 # sqs-priority-client
 [![Build](https://github.com/gregwhitaker/sqs-priority-client/actions/workflows/gradle.yml/badge.svg)](https://github.com/gregwhitaker/sqs-priority-client/actions/workflows/gradle.yml)
 
-Wrapper around the Amazon SQS client that allows you to read from multiple queues with weighted priority.
+Wrapper around the [Amazon SQS](https://aws.amazon.com/sqs/) client that allows reading from multiple queues with weighted priority.
 
 ## Build
 Run the following command to build the library and examples:
