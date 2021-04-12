@@ -71,9 +71,13 @@ public class SqsPriorityClient {
    */
   public Flux<Message> receiveMessages(final long count) {
     return Flux.create(fluxSink -> {
+      if (count < config.getMaxNumberOfMessages()) {
+        Flux.error(new IllegalArgumentException("Requested message count must be greater than configured maxNumberOfMessages"));
+      }
+
       final AtomicLong rxCnt = new AtomicLong();
 
-      while (rxCnt.get() <= count) {
+      while (rxCnt.get() + config.getMaxNumberOfMessages() <= count) {
         final PriorityQueueInfo queue = nextQueue();
 
         final ReceiveMessageRequest request = ReceiveMessageRequest.builder()

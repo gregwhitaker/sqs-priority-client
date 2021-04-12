@@ -1,5 +1,6 @@
 package com.github.gregwhitaker.sqs;
 
+import reactor.core.scheduler.Schedulers;
 import software.amazon.awssdk.services.sqs.SqsClient;
 
 import java.net.URI;
