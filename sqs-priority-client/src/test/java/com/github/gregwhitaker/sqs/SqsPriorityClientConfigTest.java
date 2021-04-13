@@ -34,12 +34,12 @@ public class SqsPriorityClientConfigTest {
   }
 
   @Test
-  public void defaultMaxEmptyReceiveCountShouldBe10() {
+  public void defaultMaxEmptyReceiveCountShouldBe3() {
     // Given
     final SqsPriorityClientConfig config = new SqsPriorityClientConfig();
 
     // Then
-    assertEquals(10, config.getMaxEmptyReceiveCount());
+    assertEquals(3, config.getMaxEmptyReceiveCount());
   }
 
   @Test
