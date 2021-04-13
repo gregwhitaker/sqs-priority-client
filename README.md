@@ -36,5 +36,5 @@ limitations under the License.
 [docs]:https://gregwhitaker.github.io/sqs-priority-client
 [docs img]:https://img.shields.io/badge/Documentation-yes-green.svg
 
-[license]:LICENSE.txt
+[license]:LICENSE
 [license img]:https://img.shields.io/badge/License-Apache%202-blue.svg
