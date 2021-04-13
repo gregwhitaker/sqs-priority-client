@@ -1,6 +1,7 @@
 # sqs-priority-client
 [![][build img]][build]
 [![][docs img]][docs]
+[![][license img]][license]
 
 Reactive wrapper around the [Amazon SQS](https://aws.amazon.com/sqs/) client that allows reading from multiple queues with weighted priority.
 
@@ -34,3 +35,6 @@ limitations under the License.
 
 [docs]:https://gregwhitaker.github.io/sqs-priority-client
 [docs img]:https://img.shields.io/badge/Documentation-yes-green.svg
+
+[license]:LICENSE.txt
+[license img]:https://img.shields.io/badge/License-Apache%202-blue.svg
