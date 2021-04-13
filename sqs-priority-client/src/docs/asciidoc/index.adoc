@@ -1,0 +1,3 @@
+= Amazon SQS Priority Client User Guide
+
+include::00-intro.adoc[]

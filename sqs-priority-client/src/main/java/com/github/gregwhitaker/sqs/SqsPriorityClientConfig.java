@@ -49,7 +49,7 @@ public class SqsPriorityClientConfig {
   /**
    * Gets the AWS sqs client.
    *
-   * @return
+   * @return sqs client
    */
   public SqsClient getSqsClient() {
     return sqsClient;
@@ -58,7 +58,7 @@ public class SqsPriorityClientConfig {
   /**
    * Sets the AWS sqs client.
    *
-   * @param sqsClient
+   * @param sqsClient sqs client
    */
   public void setSqsClient(SqsClient sqsClient) {
     this.sqsClient = sqsClient;
@@ -66,7 +66,8 @@ public class SqsPriorityClientConfig {
 
   /**
    * Gets the maximum number of messages to retrieve from a queue in a single read.
-   * @return
+   *
+   * @return max number of messages
    */
   public int getMaxNumberOfMessages() {
     return maxNumberOfMessages;
@@ -75,7 +76,7 @@ public class SqsPriorityClientConfig {
   /**
    * Sets the maximum number of messages to retrieve from a queue in a single read.
    *
-   * @param maxNumberOfMessages
+   * @param maxNumberOfMessages max number of messages
    */
   public void setMaxNumberOfMessages(int maxNumberOfMessages) {
     this.maxNumberOfMessages = maxNumberOfMessages;
@@ -84,7 +85,7 @@ public class SqsPriorityClientConfig {
   /**
    * Gets the maximum number of empty receives on a queue before reading is paused.
    *
-   * @return
+   * @return max number of empty receives
    */
   public int getMaxEmptyReceiveCount() {
     return maxEmptyReceiveCount;
@@ -93,7 +94,7 @@ public class SqsPriorityClientConfig {
   /**
    * Sets the maximum number of empty receives on a queue before reading is paused.
    *
-   * @param maxEmptyReceiveCount
+   * @param maxEmptyReceiveCount max number of empty receives
    */
   public void setMaxEmptyReceiveCount(int maxEmptyReceiveCount) {
     this.maxEmptyReceiveCount = maxEmptyReceiveCount;
@@ -102,7 +103,7 @@ public class SqsPriorityClientConfig {
   /**
    * Gets the timeout for empty receives.
    *
-   * @return
+   * @return timeout
    */
   public Duration getEmptyReceiveTimeout() {
     return emptyReceiveTimeout;
@@ -111,7 +112,7 @@ public class SqsPriorityClientConfig {
   /**
    * Sets the timeout for empty receives.
    *
-   * @param emptyReceiveTimeout
+   * @param emptyReceiveTimeout timeout
    */
   public void setEmptyReceiveTimeout(Duration emptyReceiveTimeout) {
     this.emptyReceiveTimeout = emptyReceiveTimeout;
@@ -120,7 +121,7 @@ public class SqsPriorityClientConfig {
   /**
    * Gets the priority weighted queues.
    *
-   * @return
+   * @return a {@link LinkedHashMap} of queue names to weights
    */
   public LinkedHashMap<String, Double> getWeightedQueues() {
     if (weightedQueues == null) {
@@ -133,7 +134,7 @@ public class SqsPriorityClientConfig {
   /**
    * Sets the priority weighted queues.
    *
-   * @param weightedQueues
+   * @param weightedQueues a {@link LinkedHashMap} of queue names to weights
    */
   public void setWeightedQueues(LinkedHashMap<String, Double> weightedQueues) {
     this.weightedQueues = weightedQueues;

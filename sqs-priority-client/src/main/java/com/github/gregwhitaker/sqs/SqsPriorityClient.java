@@ -64,8 +64,8 @@ public class SqsPriorityClient {
   /**
    * Gets the builder for constructing an instance of {@link SqsPriorityClient}.
    *
-   * @param sqs
-   * @return
+   * @param sqs sqs client
+   * @return builder for {@link SqsPriorityClient}
    */
   public static SqsPriorityClientBuilder builder(final SqsClient sqs) {
     return new SqsPriorityClientBuilder(sqs);
@@ -74,7 +74,7 @@ public class SqsPriorityClient {
   /**
    * Receives a stream of messages that never completes.
    *
-   * @return a {@link Flux<Message>}
+   * @return a {@link Flux} of {@link Message}
    */
   public Flux<Message> receiveMessages() {
     return receiveMessages(Long.MAX_VALUE);
@@ -84,7 +84,7 @@ public class SqsPriorityClient {
    * Receives a finite stream of the specified number of messages and then completes.
    *
    * @param count number of messages to receive
-   * @return a {@link Flux<Message>}
+   * @return a {@link Flux} of {@link Message}
    */
   public Flux<Message> receiveMessages(final long count) {
     return Flux.create(fluxSink -> {
@@ -129,7 +129,7 @@ public class SqsPriorityClient {
    * Deletes a message from the queue.
    *
    * @param receiptHandle message receipt handle
-   * @return a {@link Mono<Void>}
+   * @return a {@link Mono} of {@link Void}
    */
   public Mono<Void> deleteMessage(final String receiptHandle) {
     return Mono.fromSupplier(() -> {
