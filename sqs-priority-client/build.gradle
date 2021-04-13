@@ -85,7 +85,7 @@ task publishLowPriorityMessages(type: com.nike.pdm.localstack.aws.sqs.PublishSqs
     description("Publishes messages to the low priority queue.")
 }
 
-// Documentation Configuration
+// Documentation
 asciidoctor {
     baseDirFollowsSourceDir()
     version = project.version

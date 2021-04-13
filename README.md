@@ -1,5 +1,6 @@
 # sqs-priority-client
-[![Build](https://github.com/gregwhitaker/sqs-priority-client/actions/workflows/gradle.yml/badge.svg)](https://github.com/gregwhitaker/sqs-priority-client/actions/workflows/gradle.yml)
+[![][build img]][build]
+[![][docs img]][docs]
 
 Reactive wrapper around the [Amazon SQS](https://aws.amazon.com/sqs/) client that allows reading from multiple queues with weighted priority.
 
@@ -27,3 +28,9 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+[build]:https://github.com/gregwhitaker/sqs-priority-client/actions/workflows/gradle.yml
+[build img]:https://github.com/gregwhitaker/sqs-priority-client/actions/workflows/gradle.yml/badge.svg
+
+[docs]:https://gregwhitaker.github.io/sqs-priority-client
+[docs img]:https://img.shields.io/badge/Documentation-yes-green.svg
