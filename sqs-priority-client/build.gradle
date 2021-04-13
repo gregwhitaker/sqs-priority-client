@@ -115,6 +115,10 @@ task buildDocSite(type: Copy) {
     from ("${buildDir}/docs/javadoc") {
         into "javadoc"
     }
+
+    doLast {
+        new File(rootDir, "docs/.nojekyll").createNewFile()
+    }
 }
 
 task cleanDocSite(type: Delete) {
