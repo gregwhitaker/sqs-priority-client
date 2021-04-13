@@ -37,6 +37,7 @@ public class Application {
             .endpointOverride(URI.create(SQS_ENDPOINT))
             .build();
 
+    // Create the client
     final SqsPriorityClient sqsPriorityClient = SqsPriorityClient.builder(sqs)
             .withQueues()
               .queue("high-priority-queue", 0.80)

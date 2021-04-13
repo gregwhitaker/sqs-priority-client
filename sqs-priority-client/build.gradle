@@ -9,10 +9,10 @@ plugins {
 }
 
 // Project Configuration
-project.description     = "Amazon SQS client wrapper that supports reading from multiple queues with configured message priorities"
-project.ext.name        = "sqs-priority-client"
-project.ext.scm         = "scm:git@github.com/gregwhitaker/sqs-priority-client.git"
-project.ext.url         = "https://github.com/gregwhitaker/sqs-priority-client.git"
+project.description = "Amazon SQS client wrapper that supports reading from multiple queues with configured message priorities"
+project.ext.name    = "sqs-priority-client"
+project.ext.scm     = "scm:git@github.com/gregwhitaker/sqs-priority-client.git"
+project.ext.url     = "https://github.com/gregwhitaker/sqs-priority-client.git"
 
 // Dependency Management
 dependencies {
