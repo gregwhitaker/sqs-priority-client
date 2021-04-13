@@ -19,7 +19,6 @@ import com.github.gregwhitaker.sqs.SqsPriorityClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
-import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 import software.amazon.awssdk.services.sqs.SqsClient;
 
