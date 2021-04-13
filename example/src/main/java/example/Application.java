@@ -16,6 +16,11 @@
 package example;
 
 import com.github.gregwhitaker.sqs.SqsPriorityClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 import software.amazon.awssdk.services.sqs.SqsClient;
 
 import java.net.URI;
@@ -25,6 +30,7 @@ import java.util.concurrent.CountDownLatch;
  * Example that reads from multiple Amazon SQS queues with different priorities.
  */
 public class Application {
+  private static final Logger LOG = LoggerFactory.getLogger(Application.class);
   private static final String SQS_ENDPOINT = "http://localhost:4566";
 
   public static void main(String... args) throws Exception {
@@ -43,11 +49,18 @@ public class Application {
 
     final CountDownLatch latch = new CountDownLatch(1);
 
-    sqsPriorityClient.receiveMessages()
-            .flatMap(message -> {
-              System.out.printf("Message %s: %s%n", message.messageId(), message.body());
-              return sqsPriorityClient.deleteMessage(message.receiptHandle());
-            })
+    // Subscribe to messages on 3 different threads
+    Flux.range(1, 3)
+            .parallel()
+            .runOn(Schedulers.boundedElastic())
+              .flatMap(integer -> sqsPriorityClient.receiveMessages())
+              .flatMap(message -> {
+                System.out.printf("[%s] Message %s: %s%n", Thread.currentThread().getName(), message.messageId(), message.body());
+
+                return sqsPriorityClient.deleteMessage(message.receiptHandle())
+                        .onErrorContinue((throwable, o) -> LOG.error(throwable.getMessage()));
+              })
+            .sequential()
             .doOnComplete(latch::countDown)
             .subscribe();
 

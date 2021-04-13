@@ -33,7 +33,7 @@ public class SqsPriorityClientConfig {
   /**
    * Default maximum number of empty receives encountered on a queue before reading is temporarily paused.
    */
-  public int DEFAULT_MAX_EMPTY_RECEIVE_COUNT = 10;
+  public int DEFAULT_MAX_EMPTY_RECEIVE_COUNT = 3;
 
   /**
    * Default duration queue reading is paused for a queue when the max empty receives are encountered.
