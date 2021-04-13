@@ -3,6 +3,8 @@
 
 Wrapper around the [Amazon SQS](https://aws.amazon.com/sqs/) client that allows reading from multiple queues with weighted priority.
 
+![client-diagram](diagram.png)
+
 ## Build
 Run the following command to build the library and examples:
 
