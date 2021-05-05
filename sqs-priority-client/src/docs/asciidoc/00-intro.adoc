@@ -1,3 +1,5 @@
 == Introduction
 
 Reactive wrapper around the AWS SQS client that allows reading from multiple queues with weighted priorities.
+
+include::01-getting-started.adoc[]
