@@ -15,6 +15,9 @@ Run the following command to build the library and examples:
 
     ./gradlew clean build
 
+## Examples
+Please see the included [example project](example) for a demonstration on configuring and consuming messages with the sqs-priority-client.
+
 ## Bugs and Feedback
 For bugs, questions, and discussions please use the [Github Issues](https://github.com/gregwhitaker/sqs-priority-client/issues).
 
