@@ -10,12 +10,7 @@ Reactive wrapper around the [Amazon SQS](https://aws.amazon.com/sqs/) client tha
 ## Documentation
 For detailed documentation on this library and its features please refer to the [SQS Priority Client User Guide](https://gregwhitaker.github.io/sqs-priority-client/).
 
-## Build
-Run the following command to build the library and examples:
-
-    ./gradlew clean build
-
-## Examples
+## Example
 Please see the included [example project](example) for a demonstration on configuring and consuming messages with the sqs-priority-client.
 
 ## Bugs and Feedback
