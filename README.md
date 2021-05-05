@@ -30,8 +30,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-[build]:https://github.com/gregwhitaker/sqs-priority-client/actions/workflows/gradle.yml
-[build img]:https://github.com/gregwhitaker/sqs-priority-client/actions/workflows/gradle.yml/badge.svg
+[build]:https://github.com/gregwhitaker/sqs-priority-client/actions/workflows/gradle-build.yml
+[build img]:https://github.com/gregwhitaker/sqs-priority-client/actions/workflows/gradle-build.yml/badge.svg
 
 [docs]:https://gregwhitaker.github.io/sqs-priority-client
 [docs img]:https://img.shields.io/badge/Documentation-yes-green.svg
