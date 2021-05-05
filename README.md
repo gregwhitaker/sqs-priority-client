@@ -7,6 +7,9 @@ Reactive wrapper around the [Amazon SQS](https://aws.amazon.com/sqs/) client tha
 
 ![client-diagram](diagram.png)
 
+## Documentation
+For detailed documentation on this library and its features please refer to the [SQS Priority Client User Guide](https://gregwhitaker.github.io/sqs-priority-client/).
+
 ## Build
 Run the following command to build the library and examples:
 
